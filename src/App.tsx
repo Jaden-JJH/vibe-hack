@@ -6,6 +6,7 @@ import LoadingPage from "./pages/LoadingPage";
 import InterviewPage from "./pages/InterviewPage";
 import ResultPage from "./pages/ResultPage";
 import { useInterviewStore } from "./store/interviewStore";
+import { ResumeGuard, JobGuard, InterviewGuard, ResultGuard } from "./components/RouteGuard";
 import { X } from "lucide-react";
 
 export default function App() {
@@ -26,10 +27,10 @@ export default function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/resume" element={<ResumePage />} />
-          <Route path="/job" element={<JobPage />} />
-          <Route path="/loading" element={<LoadingPage />} />
-          <Route path="/interview" element={<InterviewPage />} />
-          <Route path="/result" element={<ResultPage />} />
+          <Route path="/job" element={<ResumeGuard><JobPage /></ResumeGuard>} />
+          <Route path="/loading" element={<JobGuard><LoadingPage /></JobGuard>} />
+          <Route path="/interview" element={<InterviewGuard><InterviewPage /></InterviewGuard>} />
+          <Route path="/result" element={<ResultGuard><ResultPage /></ResultGuard>} />
         </Routes>
       </div>
     </div>

@@ -12,6 +12,7 @@ export interface JobInput {
   mainTasks: string;
   requirements: string;
   preferred: string;
+  rawText?: string;
 }
 
 export interface InterviewQuestion {
