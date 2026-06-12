@@ -4,6 +4,7 @@ import {
   Upload, FileCheck, ArrowLeft, ArrowRight,
   User, Briefcase, Code, FolderOpen, Loader2, AlertCircle,
 } from "lucide-react";
+import Lottie from "lottie-react";
 import StepIndicator from "../components/StepIndicator";
 import { useInterviewStore } from "../store/interviewStore";
 import { extractTextFromPdf } from "../utils/pdfParser";
@@ -94,11 +95,16 @@ export default function ResumePage() {
             {/* Upload zone */}
             {pdfStatus !== "done" && (
               <label className="flex flex-col items-center justify-center gap-3 p-8 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50 hover:border-primary-400 hover:bg-primary-50/30 transition-all duration-300 cursor-pointer">
-                <div className="w-16 h-16 rounded-2xl bg-primary-100 flex items-center justify-center">
+                <div className="w-24 h-24 flex items-center justify-center">
                   {pdfStatus === "parsing" ? (
-                    <Loader2 size={28} className="text-primary-600 animate-spin" />
+                    <Loader2 size={36} className="text-primary-600 animate-spin" />
                   ) : (
-                    <Upload size={28} className="text-primary-600" />
+                    <Lottie
+                      path="/lottie/pdf.json"
+                      loop
+                      autoplay
+                      style={{ width: "100%", height: "100%" }}
+                    />
                   )}
                 </div>
                 <div className="text-center">

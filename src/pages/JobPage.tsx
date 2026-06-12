@@ -5,7 +5,9 @@ import {
   Building2, Briefcase, CheckCircle2, Star, AlertCircle,
   ClipboardPaste, FileText,
 } from "lucide-react";
+import Lottie from "lottie-react";
 import StepIndicator from "../components/StepIndicator";
+import AiButton from "../components/AiButton";
 import { useInterviewStore } from "../store/interviewStore";
 import { fetchJobPostingFromUrl } from "../utils/jobPostingParser";
 import { parseJobPosting } from "../services/claudeService";
@@ -180,6 +182,19 @@ export default function JobPage() {
         {/* URL Tab */}
         {activeTab === "url" && (
           <div className="animate-fade-in space-y-4">
+            {/* URL scan animation — shown while idle or loading, hidden after success */}
+            {status !== "done" && (
+              <div className="flex justify-center">
+                <div className="w-36 h-36">
+                  <Lottie
+                    path="/lottie/urlscan.json"
+                    loop
+                    autoplay
+                    style={{ width: "100%", height: "100%" }}
+                  />
+                </div>
+              </div>
+            )}
             <p className="text-xs text-slate-400">
               사람인, 원티드, 점핏, 잡플래닛 등의 채용공고 URL을 입력하세요.
             </p>
@@ -315,15 +330,12 @@ export default function JobPage() {
 
       {/* Bottom CTA */}
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[420px] p-5 bg-gradient-to-t from-white via-white to-white/0">
-        <button
-          id="job-start-btn"
+        <AiButton
           onClick={handleStart}
           disabled={!isReady || status === "loading"}
-          className="w-full bg-gradient-to-r from-primary-600 to-primary-700 text-white font-semibold py-4 rounded-2xl shadow-lg shadow-primary-600/25 active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 text-[15px] hover:shadow-xl cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         >
           면접 시작
-          <ArrowRight size={18} />
-        </button>
+        </AiButton>
       </div>
     </div>
   );

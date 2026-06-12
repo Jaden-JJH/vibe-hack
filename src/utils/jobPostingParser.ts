@@ -1,7 +1,7 @@
-const CORS_PROXY = "https://api.allorigins.win/get?url=";
+const CORS_PROXY = "https://corsproxy.io/?";
 const MAX_TEXT_LENGTH = 12000;
 const MIN_TEXT_LENGTH = 50;
-const FETCH_TIMEOUT_MS = 12000;
+const FETCH_TIMEOUT_MS = 15000;
 
 const SITE_SELECTORS: { match: (h: string) => boolean; selectors: string[] }[] = [
   {
@@ -75,8 +75,7 @@ export async function fetchJobPostingFromUrl(url: string): Promise<FetchResult> 
       return { success: false, error: `페이지 응답 오류 (${res.status})` };
     }
 
-    const data = await res.json();
-    const html = data.contents as string | null;
+    const html = await res.text();
 
     if (!html) {
       return { success: false, error: "페이지 내용을 가져오지 못했어요." };

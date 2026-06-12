@@ -1,5 +1,8 @@
 # Environment variables (API keys)
 .env
+
+# Playwright MCP session data
+.playwright-mcp/
 .env.local
 .env.*.local
 

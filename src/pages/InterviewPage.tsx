@@ -39,10 +39,10 @@ export default function InterviewPage() {
     if (initializedRef.current) return;
     initializedRef.current = true;
 
-    const timer = setTimeout(() => {
+    // No cleanup return — initializedRef prevents double-fire in StrictMode
+    setTimeout(() => {
       sendAiMessage(questions[0].question);
     }, 600);
-    return () => clearTimeout(timer);
   }, []);
 
   const sendAiMessage = (text: string) => {
