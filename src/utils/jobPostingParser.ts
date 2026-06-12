@@ -65,18 +65,29 @@ export async function fetchJobPostingFromUrl(url: string): Promise<FetchResult> 
   try {
     const apiUrl = `/api/fetch-job?url=${encodeURIComponent(url)}`;
     const res = await fetch(apiUrl, { signal: controller.signal });
-    const data = await res.json() as { html?: string; error?: string };
+    const data = await res.json() as { rawText?: string; html?: string; error?: string };
 
-    if (!res.ok || !data.html) {
+    if (!res.ok) {
       return { success: false, error: data.error ?? `페이지 응답 오류 (${res.status})` };
     }
 
-    const rawText = extractFromHtml(data.html, hostname);
-    if (rawText.length < MIN_TEXT_LENGTH) {
-      return { success: false, error: "공고 본문을 추출하지 못했어요." };
+    // Jina Reader가 이미 텍스트로 변환한 경우
+    if (data.rawText && data.rawText.length >= MIN_TEXT_LENGTH) {
+      return { success: true, rawText: data.rawText };
     }
 
-    return { success: true, rawText };
+    // 직접 fetch fallback — HTML 파싱
+    if (data.html) {
+      const rawText = extractFromHtml(data.html, hostname);
+      if (rawText.length >= MIN_TEXT_LENGTH) {
+        return { success: true, rawText };
+      }
+    }
+
+    return {
+      success: false,
+      error: "이 사이트는 자동 접근을 차단하고 있어요. 채용공고 내용을 복사해서 '텍스트' 탭에 붙여넣어 주세요.",
+    };
   } catch {
     return {
       success: false,
