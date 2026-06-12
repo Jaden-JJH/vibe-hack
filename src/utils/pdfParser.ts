@@ -27,8 +27,8 @@ async function extractWithPdfJs(arrayBuffer: ArrayBuffer): Promise<string> {
     const page = await pdf.getPage(i);
     const content = await page.getTextContent();
     const text = content.items
-      .filter((item): item is pdfjsLib.TextItem => "str" in item)
-      .map((item) => item.str)
+      .filter((item) => "str" in item)
+      .map((item) => (item as { str: string }).str)
       .join(" ");
     pageTexts.push(text);
   }
@@ -47,16 +47,17 @@ async function extractWithClaude(arrayBuffer: ArrayBuffer): Promise<string> {
     messages: [
       {
         role: "user",
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         content: [
           {
-            type: "document",
-            source: { type: "base64", media_type: "application/pdf", data: base64 },
-          } as Parameters<typeof client.messages.create>[0]["messages"][0]["content"][0],
+            type: "document" as const,
+            source: { type: "base64" as const, media_type: "application/pdf" as const, data: base64 },
+          },
           {
-            type: "text",
+            type: "text" as const,
             text: "이 PDF의 모든 텍스트를 그대로 추출해 출력하세요. 설명이나 마크다운 없이 원문만 출력하세요.",
           },
-        ],
+        ] as any,
       },
     ],
   });

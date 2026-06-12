@@ -6,6 +6,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import Lottie from "lottie-react";
+import homeMainAnimation from "../../lottie/home_main.json";
 
 const steps = [
   {
@@ -39,7 +40,7 @@ export default function HomePage() {
         <div className="animate-fade-in-up flex flex-col items-center mb-10">
           <div className="w-48 h-48 mb-2">
             <Lottie
-              path="/lottie/home_main.json"
+              animationData={homeMainAnimation}
               loop
               autoplay
               style={{ width: "100%", height: "100%" }}

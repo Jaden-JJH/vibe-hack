@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  ArrowLeft, ArrowRight, Link as LinkIcon, Loader2,
+  ArrowLeft, Link as LinkIcon, Loader2,
   Building2, Briefcase, CheckCircle2, Star, AlertCircle,
   ClipboardPaste, FileText,
 } from "lucide-react";
 import Lottie from "lottie-react";
+import urlscanAnimation from "../../lottie/urlscan.json";
 import StepIndicator from "../components/StepIndicator";
 import AiButton from "../components/AiButton";
 import { useInterviewStore } from "../store/interviewStore";
@@ -187,7 +188,7 @@ export default function JobPage() {
               <div className="flex justify-center">
                 <div className="w-36 h-36">
                   <Lottie
-                    path="/lottie/urlscan.json"
+                    animationData={urlscanAnimation}
                     loop
                     autoplay
                     style={{ width: "100%", height: "100%" }}

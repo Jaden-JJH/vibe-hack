@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Upload, FileCheck, ArrowLeft, ArrowRight,
+  FileCheck, ArrowLeft, ArrowRight,
   User, Briefcase, Code, FolderOpen, Loader2, AlertCircle,
 } from "lucide-react";
 import Lottie from "lottie-react";
+import pdfAnimation from "../../lottie/pdf.json";
 import StepIndicator from "../components/StepIndicator";
 import { useInterviewStore } from "../store/interviewStore";
 import { extractTextFromPdf } from "../utils/pdfParser";
@@ -100,7 +101,7 @@ export default function ResumePage() {
                     <Loader2 size={36} className="text-primary-600 animate-spin" />
                   ) : (
                     <Lottie
-                      path="/lottie/pdf.json"
+                      animationData={pdfAnimation}
                       loop
                       autoplay
                       style={{ width: "100%", height: "100%" }}
