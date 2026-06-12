@@ -1,7 +1,12 @@
-const CORS_PROXY = "https://corsproxy.io/?";
 const MAX_TEXT_LENGTH = 12000;
 const MIN_TEXT_LENGTH = 50;
 const FETCH_TIMEOUT_MS = 15000;
+
+const PROXY_BUILDERS: ((url: string) => string)[] = [
+  (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+  (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+  (url) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+];
 
 const SITE_SELECTORS: { match: (h: string) => boolean; selectors: string[] }[] = [
   {
@@ -52,6 +57,21 @@ export interface FetchResult {
   error?: string;
 }
 
+async function tryFetch(proxyUrl: string): Promise<string | null> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+  try {
+    const res = await fetch(proxyUrl, { signal: controller.signal });
+    if (!res.ok) return null;
+    const html = await res.text();
+    return html || null;
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
 export async function fetchJobPostingFromUrl(url: string): Promise<FetchResult> {
   let hostname: string;
   try {
@@ -60,38 +80,18 @@ export async function fetchJobPostingFromUrl(url: string): Promise<FetchResult> 
     return { success: false, error: "유효하지 않은 URL입니다." };
   }
 
-  try {
-    const proxyUrl = `${CORS_PROXY}${encodeURIComponent(url)}`;
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
-    let res: Response;
-    try {
-      res = await fetch(proxyUrl, { signal: controller.signal });
-    } finally {
-      clearTimeout(timeoutId);
-    }
-
-    if (!res.ok) {
-      return { success: false, error: `페이지 응답 오류 (${res.status})` };
-    }
-
-    const html = await res.text();
-
-    if (!html) {
-      return { success: false, error: "페이지 내용을 가져오지 못했어요." };
-    }
+  for (const buildProxy of PROXY_BUILDERS) {
+    const html = await tryFetch(buildProxy(url));
+    if (!html) continue;
 
     const rawText = extractFromHtml(html, hostname);
-
-    if (rawText.length < MIN_TEXT_LENGTH) {
-      return { success: false, error: "공고 본문을 추출하지 못했어요." };
+    if (rawText.length >= MIN_TEXT_LENGTH) {
+      return { success: true, rawText };
     }
-
-    return { success: true, rawText };
-  } catch {
-    return {
-      success: false,
-      error: "사이트가 자동 접근을 차단했거나 시간이 초과됐어요.",
-    };
   }
+
+  return {
+    success: false,
+    error: "이 사이트는 자동 접근을 차단하고 있어요. 채용공고 내용을 복사해서 '텍스트' 탭에 붙여넣어 주세요.",
+  };
 }
